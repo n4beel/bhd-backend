@@ -12,7 +12,7 @@ export class ReportProposalController {
         parseInt(page),
         parseInt(limit),
       );
-      return { result: res };
+      return res;
     } catch (error) {
       return error;
     }
@@ -22,7 +22,7 @@ export class ReportProposalController {
   async createReport(@Req() req: any) {
     try {
       const res = await this.reportProposalService.createReport(req.body);
-      return { result: res };
+      return res;
     } catch (error) {
       return error;
     }
@@ -32,7 +32,7 @@ export class ReportProposalController {
   async updateReport(@Req() req: any) {
     try {
       const res = await this.reportProposalService.updateReport(req.body);
-      return { result: res };
+      return res;
     } catch (error) {
       return error;
     }
@@ -42,7 +42,7 @@ export class ReportProposalController {
   async deleteReport(@Body('id') id: string) {
     try {
       const res = await this.reportProposalService.deleteReport(id);
-      return { result: res };
+      return res;
     } catch (error) {
       return error;
     }

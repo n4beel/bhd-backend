@@ -9,7 +9,7 @@ export class CommentController {
   async getComments(@Query('report') report: string) {
     try {
       const res = await this.commentService.getComments(report);
-      return { result: res };
+      return res;
     } catch (error) {
       return error;
     }
@@ -19,7 +19,7 @@ export class CommentController {
   async createComment(@Req() req: any) {
     try {
       const res = await this.commentService.createComment(req.body);
-      return { result: res };
+      return res;
     } catch (error) {
       return error;
     }
@@ -29,7 +29,7 @@ export class CommentController {
   async updateComment(@Req() req: any) {
     try {
       const res = await this.commentService.updateComment(req.body);
-      return { result: res };
+      return res;
     } catch (error) {
       return error;
     }
@@ -39,7 +39,7 @@ export class CommentController {
   async deleteComment(@Body('id') id: string) {
     try {
       const res = await this.commentService.deleteComment(id);
-      return { result: res };
+      return res;
     } catch (error) {
       return error;
     }

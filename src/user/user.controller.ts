@@ -9,8 +9,9 @@ export class UserController {
   async isInitial(@Body('address') address: string) {
     try {
       const res = await this.userService.isInitial(address);
-      return { result: res };
+      return res;
     } catch (error) {
+      console.log(error);
       return error;
     }
   }
@@ -19,7 +20,7 @@ export class UserController {
   async createUser(@Req() req: any) {
     try {
       const res = await this.userService.createUser(req.body);
-      return { result: res };
+      return res;
     } catch (error) {
       return error;
     }
@@ -29,7 +30,7 @@ export class UserController {
   async updateUser(@Req() req: any) {
     try {
       const res = await this.userService.updateUser(req.body);
-      return { result: res };
+      return res;
     } catch (error) {
       return error;
     }

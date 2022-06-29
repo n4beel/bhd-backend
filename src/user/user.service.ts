@@ -20,13 +20,15 @@ export class UserService {
             address,
           },
         );
-        return res.records.length == 1 ? res.records[0].get('u') : undefined;
+        return res.records.length == 1
+          ? { status: 200, result: res.records[0].get('u') }
+          : { status: 404, message: 'User not found' };
       } catch (error) {
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log(error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -46,14 +48,16 @@ export class UserService {
             properties,
           },
         );
-        return res.records.length == 1 ? res.records[0].get('u') : undefined;
+        return res.records.length == 1
+          ? { status: 200, result: res.records[0].get('u') }
+          : { status: 400, message: 'Unable to create user' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -74,14 +78,16 @@ export class UserService {
             properties,
           },
         );
-        return res.records.length == 1 ? res.records[0].get('u') : undefined;
+        return res.records.length == 1
+          ? { status: 200, result: res.records[0].get('u') }
+          : { status: 400, message: 'Unable to update user' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 }

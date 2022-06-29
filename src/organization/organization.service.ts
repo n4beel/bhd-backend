@@ -25,14 +25,16 @@ export class OrganizationService {
             properties: body.org,
           },
         );
-        return res.records.length == 1 ? res.records[0].get('o') : undefined;
+        return res.records.length == 1
+          ? { status: 200, result: res.records[0].get('o') }
+          : { status: 400, message: 'Unable to add organization' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -53,14 +55,16 @@ export class OrganizationService {
             properties,
           },
         );
-        return res.records.length == 1 ? res.records[0].get('o') : undefined;
+        return res.records.length == 1
+          ? { status: 200, result: res.records[0].get('o') }
+          : { status: 400, message: 'Unable to update organization' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -80,14 +84,14 @@ export class OrganizationService {
             id,
           },
         );
-        return 'deleted';
+        return { status: 200, message: 'Organization deleted successfully' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -107,14 +111,18 @@ export class OrganizationService {
             user,
           },
         );
-        return res.records.length > 0 ? res.records.map((r) => r.get('o')) : [];
+        return {
+          status: 200,
+          result:
+            res.records.length > 0 ? res.records.map((r) => r.get('o')) : [],
+        };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -135,14 +143,14 @@ export class OrganizationService {
             org: body.org,
           },
         );
-        return 'invited';
+        return { status: 200, message: 'User invited successfully' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -165,14 +173,14 @@ export class OrganizationService {
             org: body.org,
           },
         );
-        return 'accepted';
+        return { status: 200, message: 'Invite accepted successfully' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -194,14 +202,14 @@ export class OrganizationService {
             org: body.org,
           },
         );
-        return 'rejected';
+        return { status: 200, message: 'Invite rejected successfully' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -223,14 +231,14 @@ export class OrganizationService {
             org: body.org,
           },
         );
-        return 'removed';
+        return { status: 200, message: 'User removed successfully' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 }

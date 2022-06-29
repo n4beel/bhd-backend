@@ -11,31 +11,45 @@ export class ReportProposalService {
   async getReports(page, limit) {
     try {
       try {
-        console.log({
-          skip: (page - 1) * limit,
-          limit,
-        });
         const res = await this.neo4jService.read(
           `
           Match (r:Report)
           WHERE r.created_at > 0
-          Return r
+          MATCH (u:User)-[:REPORTED]->(r)
+          RETURN r, u.address as proposerAddress, u.id as proposerId, u.name as proposerName
           ORDER BY r.created_at DESC
-          Skip $skip LIMIT $limit
+          SKIP $skip LIMIT $limit
          `,
           {
             skip: this.neo4jService.int((page - 1) * limit),
             limit: this.neo4jService.int(limit),
           },
         );
-        return res.records.length > 0 ? res.records.map((a) => a.get('r')) : [];
+        const countRes = await this.neo4jService.read(
+          `
+          Match (r:Report) RETURN count(r) as count
+         `,
+        );
+        return {
+          status: 200,
+          result:
+            res.records.length > 0
+              ? res.records.map((a) => ({
+                  ...a.get('r').properties,
+                  proposerAddress: a.get('proposerAddress'),
+                  proposerId: a.get('proposerId'),
+                  proposerName: a.get('proposerName'),
+                }))
+              : [],
+          totalReports: countRes.records[0].get('count'),
+        };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -58,14 +72,16 @@ export class ReportProposalService {
             properties: body.report,
           },
         );
-        return res.records.length == 1 ? res.records[0].get('r') : undefined;
+        return res.records.length == 1
+          ? { status: 200, result: res.records[0].get('r') }
+          : { status: 400, message: 'Unable to create report' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -86,14 +102,16 @@ export class ReportProposalService {
             properties,
           },
         );
-        return res.records.length == 1 ? res.records[0].get('r') : undefined;
+        return res.records.length == 1
+          ? { status: 200, result: res.records[0].get('r') }
+          : { status: 400, message: 'Unable to update report' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -113,14 +131,14 @@ export class ReportProposalService {
             id,
           },
         );
-        return 'deleted';
+        return { status: 200, message: 'Report deleted successfully' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 }

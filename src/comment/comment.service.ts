@@ -13,23 +13,34 @@ export class CommentService {
       try {
         const res = await this.neo4jService.read(
           `
-            Match (c:Comment)
+            Match (r:Report {id: $report})
+            Match (r)-[:COMMENT]->(c:Comment)
+            MATCH (u:User)-[:COMMENTED]->(c)
             WHERE c.created_at > 0
-            Return c
+            Return c, u.name as name
             ORDER BY c.created_at
            `,
           {
             report,
           },
         );
-        return res.records.length > 0 ? res.records.map((a) => a.get('c')) : [];
+        return {
+          status: 200,
+          result:
+            res.records.length > 0
+              ? res.records.map((a) => ({
+                  ...a.get('c').properties,
+                  name: a.get('name'),
+                }))
+              : [],
+        };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -54,14 +65,16 @@ export class CommentService {
             properties: body.comment,
           },
         );
-        return res.records.length == 1 ? res.records[0].get('c') : undefined;
+        return res.records.length == 1
+          ? { status: 200, result: res.records[0].get('c') }
+          : { status: 400, message: 'Unable to add comment' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -82,14 +95,16 @@ export class CommentService {
             properties,
           },
         );
-        return res.records.length == 1 ? res.records[0].get('c') : undefined;
+        return res.records.length == 1
+          ? { status: 200, result: res.records[0].get('c') }
+          : { status: 400, message: 'Unable to update comment' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 
@@ -109,14 +124,14 @@ export class CommentService {
             id,
           },
         );
-        return 'deleted';
+        return { status: 200, message: 'Comment deleted successfully' };
       } catch (error) {
         console.log('in', error);
-        throw [404, error.message];
+        throw { status: 400, message: error.message };
       }
     } catch (error) {
       console.log('out', error);
-      throw [404, error.message];
+      throw { status: 400, message: error.message };
     }
   }
 }
